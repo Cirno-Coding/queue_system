@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class TicketType(models.Model):
@@ -85,7 +86,7 @@ class Ticket(models.Model):
     called_at = models.DateTimeField(null=True, blank=True)
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
-    service_date = models.DateField()
+    service_date = models.DateField(default=timezone.localdate)
     called_window_number = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
