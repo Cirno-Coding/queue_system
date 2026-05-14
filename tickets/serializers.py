@@ -1,10 +1,27 @@
 from rest_framework import serializers
-from .models import Ticket, TicketType, TicketEvent, OperatorTicketType
+from .models import Ticket, TicketType
 
 
-class TicketCreateSerializer(serializers.Serializer):
+class VisitorTicketTypeSerializer(serializers.ModelSerializer):
     """
-    Serializer для входных данных при создании талона.
+    Сериализатор кнопок для окна посетителя.
+    Каждая активная запись TicketType превращается в кнопку на экране.
+    """
+
+    class Meta:
+        model = TicketType
+        fields = [
+            "id",
+            "code",
+            "name",
+            "description",
+        ]
+
+
+class VisitorTicketCreateSerializer(serializers.Serializer):
+    """
+    Входные данные при создании талона посетителем.
+    Посетитель выбирает только тип талона.
     """
 
     ticket_type = serializers.PrimaryKeyRelatedField(
@@ -13,9 +30,10 @@ class TicketCreateSerializer(serializers.Serializer):
     )
 
 
-class TicketResponseSerializer(serializers.ModelSerializer):
+class VisitorTicketResponseSerializer(serializers.ModelSerializer):
     """
-    Serializer для выходных данных талона.
+    Ответ для посетителя после создания талона.
+    Именно эти данные можно показать на экране вместо печати.
     """
 
     ticket_code = serializers.SerializerMethodField()
@@ -38,12 +56,10 @@ class TicketResponseSerializer(serializers.ModelSerializer):
             "number",
             "ticket_code",
             "status",
-            "current_operator",
+            "service_date",
             "created_at",
-            "called_at",
-            "started_at",
-            "finished_at",
         ]
 
     def get_ticket_code(self, obj):
         return f"{obj.ticket_type.code}-{obj.number}"
+
